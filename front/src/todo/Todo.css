@@ -1,0 +1,43 @@
+.flex-h {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.flex-v {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.box {
+    padding: 5px 0px;
+   
+}
+
+.todo-item {
+    padding: 4px 4px;
+    background-color: bisque;
+   
+}
+.todo-item>*:first-child{
+    flex: 1;
+}
+.todo-item button{
+    display: block;
+}
+.todo-item input{
+    border: none;
+    outline: none;
+}
+.input-add{
+    background-color: #e9e9e9;
+    border: none;
+    outline: none;
+}
+.todo-item-inner{
+    display: flex;
+}
+.todo-item-inner :nth-child(2){
+    flex: 1;
+}

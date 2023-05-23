@@ -1,0 +1,27 @@
+.flex-h {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-box {
+  padding: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.form-box form {
+  gap: 5px;
+  width: 100%;
+}
+
+.form-box form>* {
+  padding: 5px;
+}
+
+.flex-v {
+  display: flex;
+  flex-direction: column;
+}
