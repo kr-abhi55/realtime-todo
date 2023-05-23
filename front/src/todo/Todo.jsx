@@ -1,50 +1,99 @@
 import { useEffect, useRef, useState } from 'react'
 import './Todo.css'
+import Utils from '../Utils';
+import { Api } from '../api/Api';
+function TodoItem({ index, onClick, onDelete, editIndex, onEditIndex, item, onUpdateItem }) {
+    const inputRef = useRef();
+    const checkboxRef = useRef();
+    // const [text, setText] = useState(defaultItem.text);
+    // const [isCompleted, setIsCompleted] = useState(defaultItem.isCompleted);
 
-function TodoItem({ index, name, onClick, onDelete, editIndex, onEditIndex, onUpdateText }) {
-    const inputRef = useRef()
-    const [isComplete, setIsComplete] = useState(false)
     function handleEdit(index) {
-        onEditIndex(index)
-
+        onEditIndex(index);
     }
-    function handleOk(index) {
-        onEditIndex(-1)
 
+    function handleOk() {
+        if (inputRef.current) {
+            const text = inputRef.current.value
+            onEditIndex(-1);
+            updateItem({ isCompleted: item.isCompleted, text: text });
+        }
     }
+
     function handleKeyEvent(e) {
         if (e.key === 'Enter') {
-            onEditIndex(-1)
+            const text = e.target.value
+            onEditIndex(-1);
+            updateItem({ isCompleted: item.isCompleted, text: text });
         }
     }
+
+    function handleCheckboxChange() {
+        const value = !item.isCompleted
+        updateItem({ isCompleted: value, text: item.text })
+    }
+
+    function updateItem({ text, isCompleted }) {
+        console.log(text, isCompleted)
+        const newItem = item
+        newItem.text = text
+        newItem.isCompleted = isCompleted
+        onUpdateItem(index, item);
+    }
+    function handleDelete() {
+        onDelete(index)
+    }
+
     useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.focus()
+        if (inputRef.current && editIndex === index) {
+            inputRef.current.focus();
         }
-    }, [editIndex])
+    }, [editIndex, index]);
 
     return (
-        <div onClick={() => { onClick({ index, name }) }} className='todo-item flex-h'>
+        <div className='todo-item flex-h'>
             <div className='todo-item-inner'>
-                <input onClick={(e) => { setIsComplete((old) => !old) }} defaultChecked={isComplete} type="checkbox" name="" id="" />
-                {(editIndex == index) ? <input ref={inputRef} onKeyDown={handleKeyEvent} type="text" value={name} onChange={(e) => { onUpdateText(index, e.target.value) }} /> :
-
-                    <span onClick={() => { handleEdit(index) }} style={{ textDecoration: isComplete ? 'line-through' : '' }} >{name}</span>
-                }
+                <input
+                    onChange={handleCheckboxChange}
+                    ref={checkboxRef}
+                    defaultChecked={item.isCompleted}
+                    type="checkbox"
+                    name=""
+                    id=""
+                />
+                {editIndex === index ? (
+                    <input
+                        ref={inputRef}
+                        onKeyDown={handleKeyEvent}
+                        type="text"
+                        defaultValue={item.text}
+                    />
+                ) : (
+                    <span
+                        onClick={() => handleEdit(index)}
+                        style={{ textDecoration: item.isCompleted ? 'line-through' : '' }}
+                    >
+                        {item.text}
+                    </span>
+                )}
             </div>
 
             <div className='flex-h'>
-                {(editIndex == index) ? <button onClick={() => { handleOk(index) }}>ok</button> : <button onClick={() => { handleEdit(index) }}>edit</button>}
-                <button onClick={() => { onDelete(index) }}>delete</button>
+                {editIndex === index ? (
+                    <button onClick={handleOk}>ok</button>
+                ) : (
+                    <button onClick={() => handleEdit(index)}>edit</button>
+                )}
+                <button onClick={handleDelete}>delete</button>
             </div>
         </div>
-    )
+    );
 }
 
 export default function Todo({
-    items,handleSetItems
+    items, onSetItems
 }) {
-  //  const [items, setItems] = useState(defaultItems)
+    //  const [items, setItems] = useState(defaultItems)
     const [text, setText] = useState("")
     const [editIndex, setEditIndex] = useState(-1)
 
@@ -58,30 +107,50 @@ export default function Todo({
         }
     }
 
-    function addItem() {
+    async function addItem() {
         if (text.length) {
-            handleSetItems([...items, text])
+            const item = { text: text, isCompleted: false }
+            
             setText('')
+            const { result, error } = await Api.postTodo(item)
+            if (error) {
+                alert(error)
+            } else {
+                onSetItems([...items, result])
+                console.log("added todo", result)
+            }
         }
     }
 
-    function deleteItem(index) {
-        const updatedItems = [...items]
-        updatedItems.splice(index, 1)
-        handleSetItems(updatedItems)
+    async function deleteItem(i) {
+        const updatedItems = [...items];
+        const id = updatedItems[i]._id
+        updatedItems.splice(i, 1);
+        onSetItems(updatedItems);
+        const { result, error } = await Api.deleteTodo(id)
+        if (error) {
+            alert(error)
+        } else {
+            console.log("delete todo", result)
+        }
+
     }
 
-    function handleItemClick({ name, index }) {
+    function handleItemClick({ item, index }) {
         //alert(`${name} ${index}`)
     }
-    function updateItem(index, name) {
-        if (index != -1) {
-            const updatedItems = [...items]
-            updatedItems[index] = name
-            handleSetItems(updatedItems)
+
+    async function handleUpdateItem(index, item) {
+        const updatedItems = [...items]
+        updatedItems[index] = item
+        onSetItems(updatedItems)
+        const { result, error } = await Api.updateTodo(item)
+        if (error) {
+            alert(error)
+        } else {
+            console.log("updated todo", result)
         }
     }
-
     const isTextEmpty = text.length === 0
 
     return (
@@ -92,8 +161,18 @@ export default function Todo({
             </div>
             <div className='flex-v box'>
                 {items.map((e, i) => (
-                    <TodoItem onUpdateText={updateItem} onClick={handleItemClick} editIndex={editIndex} onEditIndex={setEditIndex} onDelete={deleteItem} key={i} name={e} index={i} />
+
+                    <TodoItem
+                        editIndex={editIndex}
+                        onEditIndex={setEditIndex}
+                        onDelete={deleteItem}
+                        key={i}
+                        item={e}
+                        index={i}
+                        onUpdateItem={handleUpdateItem}
+                    />
                 ))}
+
             </div>
         </div>
     )

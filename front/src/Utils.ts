@@ -16,6 +16,21 @@ namespace Utils {
         return result.json()
 
     }
+    export async function putJson(url: string, body: {}, token?: string) {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        if (token) {
+            myHeaders.append("Authorization", "Bearer " + token);
+        }
+        const options: RequestInit = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: JSON.stringify(body)
+        };
+        const result = await fetch(`${SERVER_URL}${url}`, options)
+        return result.json()
+
+    }
     export async function getJson(url: string, query: string = "", token?: string) {
         var myHeaders = new Headers();
         if (token) {
@@ -23,6 +38,19 @@ namespace Utils {
         }
         var requestOptions: RequestInit = {
             method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+        const result = await fetch(`${SERVER_URL}${url}${query.length == 0 ? '' : ('?' + query)}`, requestOptions)
+        return await result.json()
+    }
+    export async function deleteJson(url: string, token?: string, query: string = "",) {
+        var myHeaders = new Headers();
+        if (token) {
+            myHeaders.append("Authorization", "Bearer " + token);
+        }
+        var requestOptions: RequestInit = {
+            method: 'DELETE',
             headers: myHeaders,
             redirect: 'follow'
         };

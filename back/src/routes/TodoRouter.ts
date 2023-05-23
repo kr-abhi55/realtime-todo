@@ -3,6 +3,7 @@ import express from 'express'
 import { VerifyLoginInfo } from '../JWTAuthHelper.js'
 import User from '../models/User.js'
 import Utils from '../Utils.js'
+import Todo from '../models/Todo.js'
 const todoRouter = express.Router()
 //{error,message,result}
 todoRouter.get('/', (req, res) => {
@@ -72,20 +73,54 @@ todoRouter.post('/sign-up', async (req, res) => {
 
 // })
 todoRouter.get("/todos", VerifyLoginInfo(), async (req, res) => {
-
+    const { _id, email } = req.user as any
+    const todos = await Todo.find({ user: _id })
+    res.json({ result: todos })
 })
 todoRouter.post("/todos", VerifyLoginInfo(), async (req, res) => {
     const { _id, email } = req.user as any
-    console.log(_id, email)
-    res.send({ result: "ok" })
+    const { text, isCompleted } = req.body
+    console.log(_id, email, text, isCompleted)
+    if (!text || isCompleted == undefined) {
+        return res.status(400).json({ error: "required all input" })
+    }
+    const todo = new Todo({
+        isCompleted: isCompleted,
+        text: text,
+        user: _id
+    })
+    todo.save()
+    res.json({ result: todo })
 })
 todoRouter.get("/todos/:id", VerifyLoginInfo(), async (req, res) => {
 
 })
-todoRouter.put("/todos/:id", VerifyLoginInfo(), async (req, res) => {
-
+todoRouter.put("/todos/", VerifyLoginInfo(), async (req, res) => {
+    // const { _id, email } = req.user as any
+    const { text, isCompleted, _id: todoId } = req.body
+    try {
+        const todo = await Todo.findById({ _id: todoId })
+        if (todo) {
+            todo.text = text
+            todo.isCompleted = isCompleted
+            await todo.save()
+            res.send({ result: todo })
+        } else {
+            res.send({ error: "didn't found any todo with id:" + todoId })
+        }
+    } catch (error) {
+        console.log(error)
+        res.send({ error: error })
+    }
 })
 todoRouter.delete("/todos/:id", VerifyLoginInfo(), async (req, res) => {
-
+    const { id } = req.params
+    try {
+        const todo = await Todo.deleteOne({ _id: id })
+        res.send({ result: todo })
+    } catch (error) {
+        console.log(error)
+        res.send({ error: error })
+    }
 })
 export default todoRouter

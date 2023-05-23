@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Utils from './Utils'
 import Todo from './todo/Todo'
+import { Api } from './api/Api'
 
 function SignIn({ onSignUp, onTodoApp }) {
   const [email, setEmail] = useState("")
@@ -35,7 +36,7 @@ function SignIn({ onSignUp, onTodoApp }) {
   }
   return (
     <div className='form-box'>
-      <form className='flex-h ' onSubmit={handleSubmit} >
+      <form className='app-flex-h ' onSubmit={handleSubmit} >
         <label htmlFor="">SignIn</label>
         <input onChange={(e) => { setEmail(e.target.value) }} type="text" placeholder='email' />
         <input onChange={(e) => { setPassword(e.target.value) }} type="password" placeholder='password' />
@@ -84,7 +85,7 @@ function SignUp({ onSignIn }) {
     <div className='form-box'>
       SignUp
       <form
-        className='flex-h '
+        className='app-flex-h '
         onSubmit={handleSubmit} >
         <input
           onChange={(e) => { setName(e.target.value) }}
@@ -124,7 +125,7 @@ function SignUp({ onSignIn }) {
 
 
 function TodoApp({ onSignIn }) {
-  const [items, setItems] = useState(["home", "office", "d"])
+  const [items, setItems] = useState([])
   const [userInfo, setUserInfo] = useState({ name: undefined, age: undefined, email: undefined, _id: undefined })
   function handleSignOut() {
     Utils.deleteToken()
@@ -137,20 +138,31 @@ function TodoApp({ onSignIn }) {
       if (token) {
         const { error, result } = await Utils.getJson("/user/info", "", token)
         setUserInfo(result)
+        loadAllTodos()
       } else {
         onSignIn()
       }
     })()
   }, [])
-  function add() {
-    setItems([...items, "Ok"])
+  async function loadAllTodos() {
+    const { result } = await Api.getAllTodos()
+    if (result) {
+     setItems(result)
+    }
+  }
+
+  function handleSetItems(e) {
+    setItems(e)
   }
   return (
     <div >
-      <button onClick={add}>Add</button>
       <button onClick={handleSignOut}>SignOut</button>
       <div>{userInfo.name} {userInfo.email} {userInfo.age}</div>
-      <Todo info={userInfo} items={items} handleSetItems={setItems} />
+      <Todo
+        info={userInfo}
+        items={items}
+        onSetItems={handleSetItems}
+      />
     </div>
   )
 }
