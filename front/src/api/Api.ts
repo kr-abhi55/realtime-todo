@@ -1,6 +1,6 @@
 import Utils from "../Utils";
 
-export namespace Api {
+namespace Api {
     export function getAllTodos() {
         const token = Utils.getToken()
         if (token) {
@@ -30,3 +30,4 @@ export namespace Api {
         return { error: "not valid token" }
     }
 }
+export default Api
