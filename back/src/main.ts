@@ -9,7 +9,7 @@ import cors from 'cors'
 import SocketHandler from './SocketHandler.js';
 dotenv.config();
 const app = express();
-app.use(cors({origin:"*"}))
+app.use(cors({ origin: "*" }))
 app.use(express.json());
 
 app.use(express.urlencoded());
@@ -17,8 +17,8 @@ app.use(todoRouter)
 await MongoDbHelper("realtime-todo")
 JwtAuthHelper(app)
 
-app.listen(3000, () => {
-    console.log('Server started on port http://localhost:3000');
+app.listen(Utils.env.EXPRESS_PORT, () => {
+    console.log('Server started on port http://localhost:'+Utils.env.EXPRESS_PORT);
 });
 
-new SocketHandler(8080)
+new SocketHandler(Utils.env.SOCKET_PORT)

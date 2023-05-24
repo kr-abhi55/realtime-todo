@@ -1,6 +1,11 @@
 
+
 namespace Utils {
-    const SERVER_URL = "http://localhost:3000"
+    export const env = {
+        SERVER_URL: (import.meta as any).env.VITE_SERVER_URL,
+        SOCKET_URL: (import.meta as any).env.VITE_SOCKET_URL,
+    }
+    const SERVER_URL = env.SERVER_URL
     export async function postJson(url: string, body: {}, token?: string) {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -12,8 +17,13 @@ namespace Utils {
             headers: myHeaders,
             body: JSON.stringify(body)
         };
-        const result = await fetch(`${SERVER_URL}${url}`, options)
-        return result.json()
+        try {
+            const result = await fetch(`${SERVER_URL}${url}`, options)
+            return result.json()
+        } catch (error) {
+            alert(error)
+            return {error}
+        }
 
     }
     export async function putJson(url: string, body: {}, token?: string) {
@@ -27,8 +37,13 @@ namespace Utils {
             headers: myHeaders,
             body: JSON.stringify(body)
         };
-        const result = await fetch(`${SERVER_URL}${url}`, options)
-        return result.json()
+        try {
+            const result = await fetch(`${SERVER_URL}${url}`, options)
+            return result.json()
+        } catch (error) {
+            alert(error)
+            return { error }
+        }
 
     }
     export async function getJson(url: string, query: string = "", token?: string) {
@@ -41,8 +56,13 @@ namespace Utils {
             headers: myHeaders,
             redirect: 'follow'
         };
-        const result = await fetch(`${SERVER_URL}${url}${query.length == 0 ? '' : ('?' + query)}`, requestOptions)
-        return await result.json()
+        try {
+            const result = await fetch(`${SERVER_URL}${url}${query.length == 0 ? '' : ('?' + query)}`, requestOptions)
+            return await result.json()
+        } catch (error) {
+            alert(error)
+            return { error }
+        }
     }
     export async function deleteJson(url: string, token?: string, query: string = "",) {
         var myHeaders = new Headers();
@@ -54,8 +74,13 @@ namespace Utils {
             headers: myHeaders,
             redirect: 'follow'
         };
-        const result = await fetch(`${SERVER_URL}${url}${query.length == 0 ? '' : ('?' + query)}`, requestOptions)
-        return await result.json()
+        try {
+            const result = await fetch(`${SERVER_URL}${url}${query.length == 0 ? '' : ('?' + query)}`, requestOptions)
+            return await result.json()
+        } catch (error) {
+            alert(error)
+            return { error }
+        }
     }
     const TOKEN_KEY = "token___key"
     export function saveToken(token: string) {

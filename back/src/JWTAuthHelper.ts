@@ -7,12 +7,13 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import LoginInfo from "./models/LoginInfo.js";
+import Utils from "./Utils.js";
 dotenv.config();
 
 // Set up passport-jwt strategy
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'secret',
+    secretOrKey: Utils.env.AUTH_SECRET_KEY,
     expiresIn: '5h'
 };
 export const VerifyLoginInfo = () => {
@@ -36,7 +37,7 @@ export default function JwtAuthHelper(app: Express,) {
     app.use(passport.initialize());
     app.post('/auth/register', async (req, res) => {
         try {
-            const { email, password } = req.body;
+            const { email, password } = req.body as any;
 
             if (!email || !password) {
                 return res.status(400).json({ error: 'required both email and password' });

@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import WebSocket, { WebSocketServer } from 'ws';
 import User from "./models/User.js";
 import Todo from "./models/Todo.js";
+import Utils from "./Utils.js";
 function verifyToken(token: string): any {
-    const secret = "secret"
+    const secret = Utils.env.AUTH_SECRET_KEY
     try {
         const decoded = jwt.verify(token, secret) as any;
         if (decoded) {

@@ -36,8 +36,8 @@ export default class SocketHandler {
             console.log('Socket closed');
         });
     }
-    constructor(public token: string, public port: number) {
-        this.wSocket = new WebSocket('ws://localhost:' + port)
+    constructor(public token: string, url: string) {
+        this.wSocket = new WebSocket(url)
         this.addObserver()
     }
     sendMessage(type: string, data: any) {

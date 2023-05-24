@@ -29,7 +29,7 @@ export default function MainPage({ onSignIn }) {
                 setUserInfo(result);
                 loadAllTodos();
                 if (isCreate) {
-                    socketHandler = new SocketHandler(token, 8080);
+                    socketHandler = new SocketHandler(token, Utils.env.SOCKET_URL);
                     socketHandler.setOnAuth(() => {
                         setSocket(socketHandler);
                     })
@@ -99,9 +99,9 @@ export default function MainPage({ onSignIn }) {
 
     return (
         <div className='full-box main-page'>
-            <Header 
-            info={userInfo}
-            onSignOut={handleSignOut} 
+            <Header
+                info={userInfo}
+                onSignOut={handleSignOut}
             />
             <AddTask socket={socket} />
             <TodoList

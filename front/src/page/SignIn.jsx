@@ -6,8 +6,6 @@ export default function SignIn({ onSignUp, onTodoApp }) {
   useEffect(() => {
     //check already login
     const token = Utils.getToken()
-    console.log("token", token)
-
     if (token) {
       //redirect  to todo
       onTodoApp()
@@ -19,7 +17,6 @@ export default function SignIn({ onSignUp, onTodoApp }) {
   async function handleSubmit(e) {
     e.preventDefault()
     const { error, result } = await Utils.postJson("/sign-in", { email, password })
-    console.log(error, result)
     if (result) {
       Utils.saveToken(result)
       onTodoApp()
