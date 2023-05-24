@@ -5,7 +5,7 @@ export default function Header({ info, onSignOut }) {
         <div className="main-page-header">
             <div className="header-left">
                 <img src={ASSETS_PROFILE} className="header-img" />
-                <label htmlFor="">Abhishek</label>
+                <label htmlFor="">{info.name}</label>
             </div>
             <div className="header-right">
                 <button onClick={onSignOut}>SignOut</button>
