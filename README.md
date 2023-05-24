@@ -1,4 +1,5 @@
 # realtime-todo
+web app to manage todo list  in realtime
 ## Features
 - [x] SignIn SignUp SignOut 
 - [x] realtime update,delete,add,get of todo
