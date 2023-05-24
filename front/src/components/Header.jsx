@@ -1,5 +1,5 @@
 import { ASSETS_PROFILE } from "../Assets";
-export default function Header({ info,onSignOut }) {
+export default function Header({ info, onSignOut }) {
 
     return (
         <div className="main-page-header">
@@ -8,7 +8,7 @@ export default function Header({ info,onSignOut }) {
                 <label htmlFor="">Abhishek</label>
             </div>
             <div className="header-right">
-                <button>SignOut</button>
+                <button onClick={onSignOut}>SignOut</button>
             </div>
         </div>
     )
