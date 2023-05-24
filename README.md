@@ -1,9 +1,9 @@
 # realtime-todo
 ## Features
-- [-] SignIn SignUp SignOut 
-- [-] realtime update,delete,add,get of todo
-- [-] session  system (what happen if user open multiple tab)
-- [-] authentication on both REST and WebSocket
+- [x] SignIn SignUp SignOut 
+- [x] realtime update,delete,add,get of todo
+- [x] session  system (what happen if user open multiple tab)
+- [x] authentication on both REST and WebSocket
 - [ ] update profile like name,email etc
 - [ ] password reset/forget system based on email
 - [ ] add image to profile
