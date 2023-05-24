@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import Utils from './Utils'
 import Todo from './todo/Todo'
 import { Api } from './api/Api'
+import SocketHandler from './SocketHandler'
 
 function SignIn({ onSignUp, onTodoApp }) {
   const [email, setEmail] = useState("")
@@ -127,27 +128,93 @@ function SignUp({ onSignIn }) {
 function TodoApp({ onSignIn }) {
   const [items, setItems] = useState([])
   const [userInfo, setUserInfo] = useState({ name: undefined, age: undefined, email: undefined, _id: undefined })
+  const [socket, setSocket] = useState()
+  const itemsRef = useRef()
+
+  useEffect(() => {
+    itemsRef.current = items
+    //console.log(items.current)
+  }, [items])
+
   function handleSignOut() {
     Utils.deleteToken()
     onSignIn()
   }
   useEffect(() => {
-    //get user details
-    (async () => {
-      const token = Utils.getToken()
+    let socketHandler; // Declare the socketHandler variable
+    let isCreate = true
+    async function fetchData() {
+      const token = Utils.getToken();
       if (token) {
-        const { error, result } = await Utils.getJson("/user/info", "", token)
-        setUserInfo(result)
-        loadAllTodos()
+        const { error, result } = await Utils.getJson("/user/info", "", token);
+        setUserInfo(result);
+        loadAllTodos();
+        if (isCreate) {
+          socketHandler = new SocketHandler(token, 8080);
+          socketHandler.setOnAuth(() => {
+
+            setSocket(socketHandler);
+          })
+        }
       } else {
-        onSignIn()
+        onSignIn();
       }
-    })()
-  }, [])
+    }
+
+    fetchData();
+
+    return () => {
+      if (socketHandler) {
+        socketHandler.close(); // Call the close method on the socketHandler
+      }
+      isCreate = false
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log()
+    socket?.sendMessage("session", {})
+    socket?.setOnMessage((type, data) => {
+      const { result, error } = data
+      switch (type) {
+        case "post/todos":
+          if (result) {
+            setItems((old) => [...old, result])
+          }
+          break
+        case "delete/todos":
+          if (result) {
+            const { index } = result;
+            setItems((old) => {
+              const updatedItems = [...old];
+              if (index !== -1) {
+                updatedItems.splice(index, 1);
+              }
+              return updatedItems;
+            });
+          }
+          break
+        case "put/todos":
+          if (result) {
+            const { index, todo } = result;
+            setItems((old) => {
+              const updatedItems = [...old];
+              updatedItems[index] = todo
+              return updatedItems;
+            });
+          }
+          break
+
+        default:
+          break
+      }
+    })
+  }, [socket])
+
   async function loadAllTodos() {
     const { result } = await Api.getAllTodos()
     if (result) {
-     setItems(result)
+      setItems(result)
     }
   }
 
@@ -162,6 +229,7 @@ function TodoApp({ onSignIn }) {
         info={userInfo}
         items={items}
         onSetItems={handleSetItems}
+        socket={socket}
       />
     </div>
   )

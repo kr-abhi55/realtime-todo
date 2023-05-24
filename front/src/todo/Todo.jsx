@@ -56,7 +56,7 @@ function TodoItem({ index, onClick, onDelete, editIndex, onEditIndex, item, onUp
                 <input
                     onChange={handleCheckboxChange}
                     ref={checkboxRef}
-                    defaultChecked={item.isCompleted}
+                    checked={item.isCompleted}
                     type="checkbox"
                     name=""
                     id=""
@@ -91,7 +91,7 @@ function TodoItem({ index, onClick, onDelete, editIndex, onEditIndex, item, onUp
 }
 
 export default function Todo({
-    items, onSetItems
+    items, onSetItems, socket
 }) {
     //  const [items, setItems] = useState(defaultItems)
     const [text, setText] = useState("")
@@ -110,29 +110,33 @@ export default function Todo({
     async function addItem() {
         if (text.length) {
             const item = { text: text, isCompleted: false }
-            
             setText('')
-            const { result, error } = await Api.postTodo(item)
-            if (error) {
-                alert(error)
-            } else {
-                onSetItems([...items, result])
-                console.log("added todo", result)
-            }
+            socket.sendMessage("post/todos", item)
+            // onSetItems([...items, result])
+            // console.log("added todo", result)
+            // const { result, error } = await Api.postTodo(item)
+            // if (error) {
+            //     alert(error)
+            // } else {
+            //     onSetItems([...items, result])
+            //     console.log("added todo", result)
+            // }
         }
     }
 
     async function deleteItem(i) {
         const updatedItems = [...items];
         const id = updatedItems[i]._id
-        updatedItems.splice(i, 1);
-        onSetItems(updatedItems);
-        const { result, error } = await Api.deleteTodo(id)
-        if (error) {
-            alert(error)
-        } else {
-            console.log("delete todo", result)
-        }
+        socket.sendMessage("delete/todos", { index: i, id: id })
+
+        // updatedItems.splice(i, 1);
+        // onSetItems(updatedItems);
+        // const { result, error } = await Api.deleteTodo(id)
+        // if (error) {
+        //     alert(error)
+        // } else {
+        //     console.log("delete todo", result)
+        // }
 
     }
 
@@ -141,15 +145,9 @@ export default function Todo({
     }
 
     async function handleUpdateItem(index, item) {
-        const updatedItems = [...items]
-        updatedItems[index] = item
-        onSetItems(updatedItems)
-        const { result, error } = await Api.updateTodo(item)
-        if (error) {
-            alert(error)
-        } else {
-            console.log("updated todo", result)
-        }
+
+        socket.sendMessage("put/todos", { index: index, todo: item })
+
     }
     const isTextEmpty = text.length === 0
 
