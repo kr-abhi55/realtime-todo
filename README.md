@@ -17,3 +17,8 @@ web app to manage todo list  in realtime
 - [ ] add sorting system based on creation time,A-Z
 - [ ] add drag and drop of todo to change order
 ## How to
+update **.env** in both back and front   
+run in both back and front
+```bash
+npm run dev
+```
