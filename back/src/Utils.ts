@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import fetch from 'node-fetch';
 dotenv.config()
 namespace Utils {
     export const env = {
