@@ -18,7 +18,7 @@ namespace Utils {
             body: JSON.stringify(body)
         };
         const result = await fetch(`${SERVER_URL}${url}`, options)
-        return result.json()
+        return result.json() as any
     }
 
 }
