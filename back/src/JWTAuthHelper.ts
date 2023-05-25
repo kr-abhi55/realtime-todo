@@ -20,7 +20,7 @@ export const VerifyLoginInfo = () => {
     return passport.authenticate('jwt', { session: false })
 }
 
-export default function JwtAuthHelper(app: Express,) {
+export default function JwtAuthHelper(app: Express) {
 
     passport.use(new Strategy(jwtOptions, async (payload, done) => {
         try {
