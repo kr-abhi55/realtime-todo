@@ -1,5 +1,8 @@
 # realtime-todo
 web app to manage todo list  in realtime
+
+![Peek 2023-05-25 05-32](https://github.com/kr-abhi55/realtime-todo/assets/118665057/a515825f-7625-479e-8c8f-7d2533ff6224)
+
 ## Features
 - [x] SignIn SignUp SignOut 
 - [x] realtime update,delete,add,get of todo
@@ -13,3 +16,4 @@ web app to manage todo list  in realtime
 - [ ] implement animation on add,delete 
 - [ ] add sorting system based on creation time,A-Z
 - [ ] add drag and drop of todo to change order
+## How to
