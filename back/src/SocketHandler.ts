@@ -1,6 +1,8 @@
 
 import jwt from "jsonwebtoken";
+import http from "http";
 import WebSocket, { WebSocketServer } from 'ws';
+import express from "express";
 import User from "./models/User.js";
 import Todo from "./models/Todo.js";
 import Utils from "./Utils.js";
@@ -129,8 +131,8 @@ export default class SocketHandler {
                 break
         }
     }
-    constructor(port: number) {
-        this.wss = new WebSocketServer({ port: port });
+    constructor(server: http.Server) {
+        this.wss = new WebSocketServer({ server});
         this.addObserver()
     }
     sendMessage(ws: WebSocket, type: string, data: any) {

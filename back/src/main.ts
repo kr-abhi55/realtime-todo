@@ -12,13 +12,13 @@ const app = express();
 app.use(cors({ origin: "*" }))
 app.use(express.json());
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended:true}));
 app.use(todoRouter)
 await MongoDbHelper("realtime-todo")
 JwtAuthHelper(app)
 
-app.listen(Utils.env.EXPRESS_PORT, () => {
+const server=app.listen(Utils.env.EXPRESS_PORT, () => {
     console.log('Server started on port http://localhost:'+Utils.env.EXPRESS_PORT);
 });
 
-new SocketHandler(Utils.env.SOCKET_PORT)
+new SocketHandler(server)
