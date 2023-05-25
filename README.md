@@ -21,8 +21,10 @@ update **.env** in both back and front
 ```bash
 #open two terminal or tab in project directory
 cd back
+npm install
 npm run dev
 #in second terminal or tab
 cd front
+npm install
 npm run dev
 ```
