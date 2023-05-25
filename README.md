@@ -18,7 +18,11 @@ web app to manage todo list  in realtime
 - [ ] add drag and drop of todo to change order
 ## How to
 update **.env** in both back and front   
-run in both back and front
 ```bash
+#open two terminal or tab in project directory
+cd back
+npm run dev
+#in second terminal or tab
+cd front
 npm run dev
 ```
