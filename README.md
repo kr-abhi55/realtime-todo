@@ -8,6 +8,7 @@ web app to manage todo list  in realtime
 - [x] realtime update,delete,add,get of todo
 - [x] session  system (what happen if user open multiple tab)
 - [x] authentication on both REST and WebSocket
+- [ ] offline mode
 - [ ] update profile like name,email etc
 - [ ] password reset/forget system based on email
 - [ ] add image to profile
